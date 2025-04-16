@@ -1,6 +1,10 @@
 package com.example.team_service.entities;
 
+import com.example.team_service.exceptions.user.UserAlreadyHasTeamException;
 import jakarta.persistence.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "users_info")
@@ -14,10 +18,17 @@ public class UserEntity {
     private String patronymic;
     @Column(name = "group_name", nullable = false)
     private String group;
-    private boolean hasActiveTeam = false;
     private String role;
     @ManyToOne
-    private TeamEntity teamEntity;
+    @JoinColumn(name = "active_team_id")
+    private TeamEntity activeTeam;
+    @ManyToMany
+    @JoinTable(
+            name = "user_team_history",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "team_id")
+    )
+    private List<TeamEntity> teams = new ArrayList<>();
 
     protected UserEntity() {
     }
@@ -71,14 +82,6 @@ public class UserEntity {
         this.group = group;
     }
 
-    public boolean isHasActiveTeam() {
-        return hasActiveTeam;
-    }
-
-    public void setHasActiveTeam(boolean hasActiveTeam) {
-        this.hasActiveTeam = hasActiveTeam;
-    }
-
     public String getRole() {
         return role;
     }
@@ -87,11 +90,19 @@ public class UserEntity {
         this.role = role;
     }
 
-    public TeamEntity getTeamEntity() {
-        return teamEntity;
+    public TeamEntity getActiveTeam() {
+        return activeTeam;
     }
 
-    public void setTeamEntity(TeamEntity teamEntity) {
-        this.teamEntity = teamEntity;
+    public void setActiveTeam(TeamEntity activeTeam) {
+        this.activeTeam = activeTeam;
+    }
+
+    public void setTeams(List<TeamEntity> teams) {
+        this.teams = teams;
+    }
+
+    public List<TeamEntity> getTeams() {
+        return teams;
     }
 }

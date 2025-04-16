@@ -2,6 +2,8 @@ package com.example.team_service.entities;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Entity
@@ -11,7 +13,7 @@ public class TeamEntity extends BaseEntity {
     private UserEntity lead;
     private boolean isActive = true;
     private Long topicId;
-    @OneToMany(mappedBy ="teamEntity")
+    @ManyToMany(mappedBy = "teams", fetch = FetchType.EAGER)
     private List<UserEntity> userEntities;
 
     protected TeamEntity() {
@@ -19,6 +21,7 @@ public class TeamEntity extends BaseEntity {
 
     public TeamEntity(UserEntity lead) {
         this.lead = lead;
+        this.userEntities = new ArrayList<>(Arrays.asList(lead));
     }
 
     public UserEntity getLead() {
